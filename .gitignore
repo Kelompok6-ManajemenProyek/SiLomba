@@ -1,0 +1,11 @@
+
+
+# File unggahan pengguna
+/uploads/poster/*
+!/uploads/poster/.gitkeep
+
+/uploads/profil/*
+!/uploads/profil/.gitkeep
+
+/uploads/sertifikat/*
+!/uploads/sertifikat/.gitkeep
