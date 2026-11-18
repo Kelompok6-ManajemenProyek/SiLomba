@@ -19,7 +19,17 @@ $flash = get_flash();
     <link rel="stylesheet"
           href="<?= e(url('assets/css/style.css')) ?>">
 
-    <script src="<?= e(url('assets/js/main.js')) ?>" defer></script>
+    <script>
+(function(){ if (localStorage.getItem('theme') === 'dark') document.documentElement.classList.add('dark-mode'); })();
+</script>
+<style>
+html.dark-mode body { background: #0f172a; color: #f1f5f9; }
+html.dark-mode body, html.dark-mode h1, html.dark-mode h2, html.dark-mode h3, html.dark-mode p, html.dark-mode label, html.dark-mode span, html.dark-mode td, html.dark-mode th { color: #f1f5f9; }
+html.dark-mode .card, html.dark-mode .profile-card, html.dark-mode .settings-nav, html.dark-mode .stat-card { background: #1e293b; border-color: #334155; color: #e2e8f0; }
+html.dark-mode body { background: #0f172a; color: #f1f5f9; }
+html.dark-mode .card, html.dark-mode .profile-card, html.dark-mode .stat-card, html.dark-mode .settings-nav, html.dark-mode table, html.dark-mode th, html.dark-mode td, html.dark-mode .table-wrapper { background: #1e293b; color: #f1f5f9; border-color: #334155; }
+html.dark-mode .form-control { background: #0f172a; color: #f1f5f9; border-color: #334155; }
+</style>
 </head>
 <body>
 
@@ -48,7 +58,22 @@ $flash = get_flash();
         </form>
     </div>
 
-    <div class="topbar-user">
+    <button type="button" id="themeToggle" style="margin-right:12px;">🌙</button>
+<script>
+(function(){
+  var btn=document.getElementById('themeToggle');
+  if(!btn) return;
+  if(localStorage.getItem('theme')==='dark'){btn.textContent='☀️';}
+  btn.addEventListener('click',function(){
+    var dark=!document.documentElement.classList.contains('dark-mode');
+    document.documentElement.classList.toggle('dark-mode',dark);
+    document.body.classList.toggle('dark-mode',dark);
+    localStorage.setItem('theme',dark?'dark':'light');
+    btn.textContent=dark?'☀️':'🌙';
+  });
+})();
+</script>
+<div class="topbar-user">
         <div class="topbar-user-info">
             <div class="topbar-user-name"><?= e($user['nama'] ?? 'Pengguna') ?></div>
             <div class="topbar-user-role"><?= e(ucfirst($user['role'] ?? '')) ?></div>
