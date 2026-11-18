@@ -99,7 +99,7 @@ require_once __DIR__ . '/../includes/sidebar_akama.php';
             <p>Distribusi status seluruh lomba yang tercatat.</p>
         </div>
     </div>
-
+    <canvas id="statusChart" height="120"></canvas>
     <div class="stats-grid">
         <?php
         $label_status = [
@@ -126,7 +126,6 @@ require_once __DIR__ . '/../includes/sidebar_akama.php';
         <div>
             <h2>Lomba dengan Peserta Terbanyak</h2>
             <p>Lima lomba dengan jumlah pendaftaran paling tinggi.</p>
-        </div>
     </div>
 
     <div class="table-wrapper">
@@ -162,7 +161,6 @@ require_once __DIR__ . '/../includes/sidebar_akama.php';
         <div>
             <h2>Tren Pengajuan Lomba</h2>
             <p>Jumlah lomba berdasarkan bulan pencatatan.</p>
-        </div>
     </div>
 
     <div class="table-wrapper">
@@ -192,5 +190,20 @@ require_once __DIR__ . '/../includes/sidebar_akama.php';
         </table>
     </div>
 </section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const statusLabels = <?= json_encode(array_keys($jumlah_status)) ?>;
+const statusData = <?= json_encode(array_values($jumlah_status)) ?>;
+new Chart(document.getElementById('statusChart'), { type: 'doughnut', data: { labels: statusLabels, datasets: [{ data: statusData }] } });
+
+const pesertaLabels = <?= json_encode(array_column($lomba_populer, 'judul')) ?>;
+const pesertaData = <?= json_encode(array_map('intval', array_column($lomba_populer, 'jumlah_peserta'))) ?>;
+new Chart(document.getElementById('pesertaChart'), { type: 'bar', data: { labels: pesertaLabels, datasets: [{ label: 'Peserta', data: pesertaData, backgroundColor: '#10b981' }] }, options: { responsive: true, scales: { y: { beginAtZero: true } } } });
+
+const trendLabels = <?= json_encode(array_column($statistik_bulanan, 'bulan')) ?>;
+const trendData = <?= json_encode(array_map('intval', array_column($statistik_bulanan, 'jumlah'))) ?>;
+new Chart(document.getElementById('trendChart'), { type: 'line', data: { labels: trendLabels, datasets: [{ label: 'Lomba', data: trendData, fill: true, backgroundColor: 'rgba(79,70,229,.2)', borderColor: '#4f46e5' }] }, options: { responsive: true, scales: { y: { beginAtZero: true } } } });
+</script>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>

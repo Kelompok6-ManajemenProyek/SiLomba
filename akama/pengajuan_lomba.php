@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $aksi = $_POST['aksi'] ?? '';
     $catatan = trim($_POST['catatan'] ?? '');
 
-    if (!$lomba_id || !in_array($aksi, ['setujui', 'tolak', 'publikasikan'], true)) {
+    if (!$lomba_id || !in_array($aksi, ['setujui', 'tolak', 'publikasikan', 'hapus'], true)) {
         set_flash('error', 'Data pengajuan tidak valid.');
         redirect('akama/pengajuan_lomba.php');
     }
@@ -81,6 +81,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 set_flash('error', 'Pengajuan tidak ditemukan atau sudah diproses.');
             }
+        } elseif ($aksi === 'hapus') {
+            $stmt = $pdo->prepare("DELETE FROM lomba WHERE id = ?");
+            $stmt->execute([$lomba_id]);
+            set_flash('success', 'Lomba berhasil dihapus.');
         } elseif ($aksi === 'publikasikan') {
             $stmt = $pdo->prepare(
                 "UPDATE lomba
@@ -222,6 +226,11 @@ require_once __DIR__ . '/../includes/sidebar_akama.php';
                                     onclick="document.getElementById('detail-<?= (int)$lomba['id'] ?>').hidden = false">
                                     Detail
                                 </button>
+                                <form method="POST" style="display:inline">
+                                    <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
+                                    <input type="hidden" name="lomba_id" value="<?= (int)$lomba['id'] ?>">
+                                    <button type="submit" name="aksi" value="hapus" class="btn btn-sm btn-danger" data-confirm="Hapus lomba ini?">Hapus</button>
+                                </form>
                             </td>
                         </tr>
 

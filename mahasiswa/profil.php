@@ -8,7 +8,7 @@ $user_id = (int)current_user()['id'];
 $errors = [];
 
 $stmt = $pdo->prepare(
-    "SELECT nama, nim, email, username, no_telpon, fakultas, program_studi
+    "SELECT nama, nim, email, username, no_telpon, fakultas, program_studi, foto, updated_at
      FROM users WHERE id = ? AND role = 'mahasiswa'"
 );
 $stmt->execute([$user_id]);
@@ -20,35 +20,55 @@ if (!$profil) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+        if (!verify_csrf_token($_POST['csrf_token'] ?? null)) { set_flash('error','Token tidak valid.'); redirect('mahasiswa/profil.php'); }
+        $file = $_FILES['foto'];
+        $allowed = ['image/jpeg'=>'jpg','image/png'=>'png'];
+        $mime = mime_content_type($file['tmp_name']);
+        if (isset($allowed[$mime]) && $file['size'] <= 2*1024*1024) {
+            $folder = __DIR__ . '/../uploads/profil/';
+            if (!is_dir($folder)) mkdir($folder,0755,true);
+            $name = bin2hex(random_bytes(16)).'.'.$allowed[$mime];
+            if (move_uploaded_file($file['tmp_name'],$folder.$name)) {
+                $stmt = $pdo->prepare("UPDATE users SET foto=?, updated_at=NOW() WHERE id=?");
+                $stmt->execute([$name,$user_id]);
+                set_flash('success','Foto profil diperbarui.');
+            } else set_flash('error','Gagal menyimpan foto.');
+        } else set_flash('error','Format/ukuran foto tidak valid.');
+        redirect('mahasiswa/profil.php');
+    }
     if (!verify_csrf_token($_POST['csrf_token'] ?? null)) {
         set_flash('error', 'Token keamanan tidak valid.');
         redirect('mahasiswa/profil.php');
     }
 
     $nama = trim($_POST['nama'] ?? '');
+    $nim = trim($_POST['nim'] ?? '');
     $email = trim($_POST['email'] ?? '');
     $no_telpon = trim($_POST['no_telpon'] ?? '');
     $fakultas = trim($_POST['fakultas'] ?? '');
     $program_studi = trim($_POST['program_studi'] ?? '');
 
     if ($nama === '') $errors[] = 'Nama wajib diisi.';
+    if ($nim === '') $errors[] = 'NIM wajib diisi.';
+    if (mb_strlen($nim) > 30) $errors[] = 'NIM melebihi batas karakter.';
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Email tidak valid.';
 
     if (!$errors) {
-        $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ? AND id <> ?");
-        $stmt->execute([$email, $user_id]);
-        if ($stmt->fetch()) $errors[] = 'Email sudah digunakan akun lain.';
+        $stmt = $pdo->prepare("SELECT id FROM users WHERE (email = ? OR nim = ?) AND id <> ?");
+        $stmt->execute([$email, $nim, $user_id]);
+        if ($stmt->fetch()) $errors[] = 'Email atau NIM sudah digunakan akun lain.';
     }
 
     if (!$errors) {
         $stmt = $pdo->prepare(
             "UPDATE users
-             SET nama = ?, email = ?, no_telpon = ?, fakultas = ?,
+             SET nama = ?, nim = ?, email = ?, no_telpon = ?, fakultas = ?,
                  program_studi = ?, updated_at = NOW()
              WHERE id = ? AND role = 'mahasiswa'"
         );
         $stmt->execute([
-            $nama, $email, $no_telpon ?: null,
+            $nama, $nim, $email, $no_telpon ?: null,
             $fakultas ?: null, $program_studi ?: null, $user_id
         ]);
         $_SESSION['user']['nama'] = $nama;
@@ -57,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $profil = array_merge($profil, [
-        'nama' => $nama, 'email' => $email, 'no_telpon' => $no_telpon,
+        'nama' => $nama, 'nim' => $nim, 'email' => $email, 'no_telpon' => $no_telpon,
         'fakultas' => $fakultas, 'program_studi' => $program_studi
     ]);
 }
@@ -77,6 +97,14 @@ require_once __DIR__ . '/../includes/sidebar_mahasiswa.php';
 <?php endif; ?>
 
 <section class="card">
+    <form method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
+        <input type="file" name="foto" accept="image/png,image/jpeg">
+        <button class="btn btn-sm btn-outline" type="submit">Ubah Foto</button>
+    </form>
+</section>
+
+<section class="card">
     <form method="POST" data-validate>
         <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
 
@@ -86,7 +114,7 @@ require_once __DIR__ . '/../includes/sidebar_mahasiswa.php';
         </div>
         <div class="form-group">
             <label for="nim">NIM</label>
-            <input class="form-control" id="nim" value="<?= e($profil['nim'] ?? '') ?>" disabled>
+            <input class="form-control" id="nim" name="nim" required value="<?= e($profil['nim'] ?? '') ?>">
         </div>
         <div class="form-group">
             <label for="username">Username</label>

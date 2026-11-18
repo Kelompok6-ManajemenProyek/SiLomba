@@ -8,7 +8,7 @@ $user_id = (int) current_user()['id'];
 $errors = [];
 
 $stmt = $pdo->prepare(
-    "SELECT id, nama, email, username, no_telpon
+    "SELECT id, nama, email, username, no_telpon, foto, updated_at
      FROM users WHERE id = ? AND role = 'pic'"
 );
 $stmt->execute([$user_id]);
@@ -24,6 +24,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         set_flash('error', 'Token keamanan tidak valid.');
         redirect('pic/profil.php');
     }
+    if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+        $file = $_FILES['foto'];
+        $allowed = ['image/jpeg' => 'jpg', 'image/png' => 'png'];
+        $mime = mime_content_type($file['tmp_name']);
+        if (isset($allowed[$mime]) && $file['size'] <= 2*1024*1024) {
+            $folder = __DIR__ . '/../uploads/profil/';
+            if (!is_dir($folder)) mkdir($folder,0755,true);
+            $name = bin2hex(random_bytes(16)).'.'.$allowed[$mime];
+            if (move_uploaded_file($file['tmp_name'],$folder.$name)) {
+                $stmt = $pdo->prepare("UPDATE users SET foto = ?, updated_at = NOW() WHERE id = ?");
+                $stmt->execute([$name,$user_id]);
+                set_flash('success','Foto profil diperbarui.');
+            }
+        } else {
+            set_flash('error','Format/ukuran foto tidak valid.');
+        }
+        redirect('pic/profil.php');
+    }
+
 
     $nama = trim($_POST['nama'] ?? '');
     $email = trim($_POST['email'] ?? '');
@@ -75,6 +94,14 @@ require_once __DIR__ . '/../includes/sidebar_pic.php';
 <?php endif; ?>
 
 <section class="card">
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;">
+        <div style="width:72px;height:72px;border-radius:50%;background:#1e3a8a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;">PIC</div>
+        <form method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
+            <input type="file" name="foto" accept="image/png,image/jpeg">
+            <button class="btn btn-sm btn-outline" type="submit">Ubah Foto</button>
+        </form>
+    </div>
     <form method="POST" data-validate>
         <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
 
