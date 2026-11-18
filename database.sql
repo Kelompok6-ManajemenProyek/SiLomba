@@ -232,13 +232,14 @@ CREATE TABLE pengaturan (
 INSERT INTO pengaturan (nama_situs, email_admin)
 VALUES ('SILOMBA - Sistem Informasi Lomba', NULL);
 
-ALTER TABLE `lomba`
-ADD COLUMN `link_pendaftaran` VARCHAR(255) NULL DEFAULT NULL AFTER `deskripsi`,
-ADD COLUMN `link_panduan` VARCHAR(255) NULL DEFAULT NULL AFTER `link_pendaftaran`,
-ADD COLUMN `kontak_person` VARCHAR(255) NULL DEFAULT NULL AFTER `link_panduan`;
+
 -- =========================================================
 -- SELESAI
 -- Catatan:
 -- Akun pengguna dibuat melalui halaman registrasi.
 -- Akun AKAMA pertama perlu dibuat secara terkontrol.
 -- =========================================================
+
+SHOW CREATE TABLE pendaftaran_lomba;
+SHOW CREATE TABLE lomba;
+

@@ -12,6 +12,7 @@ if (isset($_SESSION['user'])) {
         'pic' => 'pic/dashboard.php',
         'mahasiswa' => 'mahasiswa/dashboard.php',
     ];
+
     if (isset($destination[$role])) {
         redirect($destination[$role]);
     }
@@ -23,8 +24,10 @@ if (isset($_SESSION['user'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SILOMBA - Sistem Informasi Lomba</title>
+
     <link rel="stylesheet" href="<?= url('assets/css/style.css') ?>">
     <link rel="stylesheet" href="<?= url('assets/css/auth.css') ?>">
+
     <style>
         :root {
             --landing-brand: #0f3d99;
@@ -109,10 +112,11 @@ if (isset($_SESSION['user'])) {
             min-height: 100vh;
             display: flex;
             align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 0 20px;
+            justify-content: flex-start;
+            text-align: left;
+            padding: 110px 7% 70px;
             overflow: hidden;
+            background: var(--landing-dark);
         }
 
         .landing-hero-bg {
@@ -125,6 +129,7 @@ if (isset($_SESSION['user'])) {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            object-position: center center;
         }
 
         .landing-hero-overlay {
@@ -132,18 +137,22 @@ if (isset($_SESSION['user'])) {
             inset: 0;
             z-index: 1;
             background: linear-gradient(
-                180deg,
-                rgba(15, 61, 153, 0.55) 0%,
-                rgba(15, 23, 42, 0.75) 60%,
-                rgba(15, 23, 42, 0.9) 100%
+                90deg,
+                rgba(15, 23, 42, 0.96) 0%,
+                rgba(15, 23, 42, 0.90) 28%,
+                rgba(15, 23, 42, 0.68) 43%,
+                rgba(15, 23, 42, 0.25) 65%,
+                rgba(15, 23, 42, 0.08) 100%
             );
         }
 
         .landing-hero-content {
             position: relative;
             z-index: 2;
-            max-width: 900px;
+            width: 48%;
+            max-width: 590px;
             color: #ffffff;
+            text-align: left;
         }
 
         .landing-hero .badge-pill {
@@ -161,31 +170,32 @@ if (isset($_SESSION['user'])) {
             backdrop-filter: blur(8px);
         }
 
-        .landing-hero h1 {
-            font-size: clamp(40px, 6vw, 72px);
+        .landing-hero h2 {
+            font-size: clamp(36px, 4.3vw, 58px);
             font-weight: 900;
-            line-height: 1.1;
+            line-height: 1.15;
             margin-bottom: 24px;
-            letter-spacing: -2px;
+            letter-spacing: -1.5px;
             background: linear-gradient(135deg, #ffffff 0%, #bae6fd 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         .landing-hero p {
-            font-size: clamp(16px, 2vw, 22px);
+            font-size: clamp(15px, 1.4vw, 18px);
             color: #e2e8f0;
-            margin-bottom: 40px;
+            margin-bottom: 32px;
             font-weight: 400;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
+            max-width: 480px;
+            margin-left: 0;
+            margin-right: 0;
+            line-height: 1.8;
         }
 
         .landing-hero-actions {
             display: flex;
             gap: 16px;
-            justify-content: center;
+            justify-content: flex-start;
             flex-wrap: wrap;
         }
 
@@ -502,8 +512,17 @@ if (isset($_SESSION['user'])) {
                 grid-template-columns: 1fr;
             }
 
-            .landing-hero h1 {
-                font-size: 36px;
+            .landing-hero {
+                padding-left: 6%;
+                padding-right: 6%;
+            }
+
+            .landing-hero-content {
+                width: 58%;
+            }
+
+            .landing-hero h2 {
+                font-size: 38px;
             }
         }
 
@@ -522,12 +541,35 @@ if (isset($_SESSION['user'])) {
                 font-size: 13px;
             }
 
-            .landing-hero-actions {
-                flex-direction: column;
-                align-items: center;
+            .landing-hero {
+                min-height: 100vh;
+                padding: 120px 24px 60px;
             }
 
-            .landing-hero-actions .btn {
+            .landing-hero-content {
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .landing-hero-overlay {
+                background: rgba(15, 23, 42, 0.82);
+            }
+
+            .landing-hero h2 {
+                font-size: 34px;
+            }
+
+            .landing-hero p {
+                font-size: 15px;
+            }
+
+            .landing-hero-actions {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .landing-hero-actions .btn-landing-primary,
+            .landing-hero-actions .btn-landing-secondary {
                 width: 100%;
                 max-width: 280px;
                 justify-content: center;
@@ -551,51 +593,73 @@ if (isset($_SESSION['user'])) {
 </head>
 <body>
 
+<!-- ---------- NAVIGASI ---------- -->
 <nav class="landing-nav">
     <div class="nav-brand">
         <img src="<?= e(url('picture/logo%20silomba.png')) ?>" alt="Logo SILOMBA">
         <span>SILOMBA</span>
     </div>
+
     <div class="nav-links">
         <a href="#fitur">Fitur</a>
         <a href="#peran">Peran Pengguna</a>
     </div>
+
     <div class="nav-actions">
-       
     </div>
 </nav>
 
+<!-- ---------- HERO ---------- -->
 <header class="landing-hero">
     <div class="landing-hero-bg">
         <img src="<?= e(url('picture/landing%20page.png')) ?>" alt="Landing Page SILOMBA">
     </div>
+
     <div class="landing-hero-overlay"></div>
+
     <div class="landing-hero-content">
         <span class="badge-pill">🏆 Sistem Informasi Lomba Mahasiswa</span>
-        <h2>Temukan, Daftar, dan Raih Prestasi<br>melalui SILOMBA</h2>
-        <p>Platform terpadu untuk pengelolaan informasi lomba, pendaftaran peserta,
-           dan sertifikat digital bagi mahasiswa, PIC, dan AKAMA.</p>
+
+        <h2>
+            Temukan, Daftar, dan Raih Prestasi<br>
+            melalui SILOMBA
+        </h2>
+
+        <p>
+            Platform terpadu untuk pengelolaan informasi lomba, pendaftaran peserta,
+            dan sertifikat digital bagi mahasiswa, PIC, dan AKAMA.
+        </p>
+
         <div class="landing-hero-actions">
-            <a href="auth/login.php" class="btn-landing-primary">Masuk ke Akun Saya</a>
-            <a href="auth/register.php" class="btn-landing-secondary">Buat Akun Baru</a>
+            <a href="auth/login.php" class="btn-landing-primary">
+                Masuk ke Akun Saya
+            </a>
+
+            <a href="auth/register.php" class="btn-landing-secondary">
+                Buat Akun Baru
+            </a>
         </div>
     </div>
 </header>
 
+<!-- ---------- STATS ---------- -->
 <section class="landing-stats" id="stats">
     <div class="stats-container">
         <div class="stat-item">
             <span class="stat-number">3+</span>
             <span class="stat-label">Jenis Peran Pengguna</span>
         </div>
+
         <div class="stat-item">
             <span class="stat-number">100%</span>
             <span class="stat-label">Terintegrasi Digital</span>
         </div>
+
         <div class="stat-item">
             <span class="stat-number">24/7</span>
             <span class="stat-label">Akses Informasi Lomba</span>
         </div>
+
         <div class="stat-item">
             <span class="stat-number">∞</span>
             <span class="stat-label">Prestasi Menunggu Anda</span>
@@ -603,86 +667,143 @@ if (isset($_SESSION['user'])) {
     </div>
 </section>
 
+<!-- ---------- FEATURES ---------- -->
 <section class="landing-features" id="fitur">
     <div class="section-header">
         <h2>Fitur Unggulan</h2>
-        <p>Semua yang Anda butuhkan untuk mengelola dan mengikuti lomba dalam satu platform.</p>
+        <p>
+            Semua yang Anda butuhkan untuk mengelola dan mengikuti lomba
+            dalam satu platform.
+        </p>
     </div>
+
     <div class="features-grid">
         <div class="feature-card">
             <div class="feature-icon">📢</div>
             <h3>Informasi Lomba Terpusat</h3>
-            <p>Jelajahi berbagai lomba mahasiswa yang dipublikasikan dengan detail lengkap, kategori, dan deadline pendaftaran.</p>
+            <p>
+                Jelajahi berbagai lomba mahasiswa yang dipublikasikan dengan
+                detail lengkap, kategori, dan deadline pendaftaran.
+            </p>
         </div>
+
         <div class="feature-card">
             <div class="feature-icon">📝</div>
             <h3>Pendaftaran Mudah</h3>
-            <p>Daftar lomba secara online dengan proses yang terintegrasi dan notifikasi status pendaftaran secara real-time.</p>
+            <p>
+                Daftar lomba secara online dengan proses yang terintegrasi
+                dan notifikasi status pendaftaran secara real-time.
+            </p>
         </div>
+
         <div class="feature-card">
             <div class="feature-icon">📜</div>
             <h3>Sertifikat Digital</h3>
-            <p>Akses dan unduh sertifikat lomba yang telah Anda peroleh secara digital, kapan saja dan di mana saja.</p>
+            <p>
+                Akses dan unduh sertifikat lomba yang telah Anda peroleh
+                secara digital, kapan saja dan di mana saja.
+            </p>
         </div>
+
         <div class="feature-card">
             <div class="feature-icon">👥</div>
             <h3>Kelola Peserta</h3>
-            <p>PIC dapat mengelola data peserta, verifikasi pendaftaran, dan mengunggah sertifikat dengan mudah.</p>
+            <p>
+                PIC dapat mengelola data peserta, verifikasi pendaftaran,
+                dan mengunggah sertifikat dengan mudah.
+            </p>
         </div>
+
         <div class="feature-card">
             <div class="feature-icon">✅</div>
             <h3>Verifikasi AKAMA</h3>
-            <p>AKAMA menyetujui pengajuan lomba dan mempublikasikannya secara final untuk diakses semua mahasiswa.</p>
+            <p>
+                AKAMA menyetujui pengajuan lomba dan mempublikasikannya
+                secara final untuk diakses semua mahasiswa.
+            </p>
         </div>
+
         <div class="feature-card">
             <div class="feature-icon">📊</div>
             <h3>Dashboard &amp; Statistik</h3>
-            <p>Pantau perkembangan lomba, jumlah pendaftar, dan statistik keikutsertaan melalui dashboard interaktif.</p>
+            <p>
+                Pantau perkembangan lomba, jumlah pendaftar, dan statistik
+                keikutsertaan melalui dashboard interaktif.
+            </p>
         </div>
     </div>
 </section>
 
+<!-- ---------- ROLES ---------- -->
 <section class="landing-roles" id="peran">
     <div class="section-header">
         <h2>Siapa yang Menggunakan SILOMBA?</h2>
-        <p>Platform ini dirancang untuk semua pihak dalam ekosistem perlombaan kampus.</p>
+        <p>
+            Platform ini dirancang untuk semua pihak dalam ekosistem
+            perlombaan kampus.
+        </p>
     </div>
+
     <div class="roles-grid">
         <div class="role-card akama">
             <div class="role-icon">🏛️</div>
             <h3>AKAMA</h3>
-            <p>Bagian yang mengelola verifikasi dan publikasi semua pengajuan lomba secara terpusat.</p>
+            <p>
+                Bagian yang mengelola verifikasi dan publikasi semua
+                pengajuan lomba secara terpusat.
+            </p>
             <span class="role-badge akama">Administrator</span>
         </div>
+
         <div class="role-card pic">
             <div class="role-icon">📋</div>
             <h3>PIC Lomba</h3>
-            <p>Penanggung jawab lomba yang mengajukan, mengelola peserta, dan mengunggah sertifikat.</p>
+            <p>
+                Penanggung jawab lomba yang mengajukan, mengelola peserta,
+                dan mengunggah sertifikat.
+            </p>
             <span class="role-badge pic">Penyelenggara</span>
         </div>
+
         <div class="role-card mahasiswa">
             <div class="role-icon">🎓</div>
             <h3>Mahasiswa</h3>
-            <p>Pengguna akhir yang mencari informasi lomba, mendaftar, dan menerima sertifikat digital.</p>
+            <p>
+                Pengguna akhir yang mencari informasi lomba, mendaftar,
+                dan menerima sertifikat digital.
+            </p>
             <span class="role-badge mahasiswa">Peserta</span>
         </div>
     </div>
 </section>
 
+<!-- ---------- CTA ---------- -->
 <section class="landing-cta">
     <h2>Siapa lagi yang akan meraih prestasi?</h2>
-    <p>Gabung ribuan mahasiswa yang telah menemukan dan mengikuti lomba melalui SILOMBA.</p>
+
+    <p>
+        Gabung ribuan mahasiswa yang telah menemukan dan mengikuti
+        lomba melalui SILOMBA.
+    </p>
+
     <div class="landing-cta-actions">
-        <a href="auth/login.php" class="btn-landing-primary">Masuk Sekarang</a>
-        <a href="auth/register.php" class="btn-landing-secondary">Daftar Gratis</a>
+        <a href="auth/login.php" class="btn-landing-primary">
+            Masuk Sekarang
+        </a>
+
+        <a href="auth/register.php" class="btn-landing-secondary">
+            Daftar Gratis
+        </a>
     </div>
 </section>
 
+<!-- ---------- FOOTER ---------- -->
 <footer class="landing-footer">
     <div class="footer-brand">
         <img src="<?= e(url('picture/logo%20silomba.png')) ?>" alt="Logo SILOMBA">
         <span>SILOMBA</span>
     </div>
+
     <p>Sistem Informasi Lomba &bull; UIN Imam Bonjol Padang</p>
     <p>&copy; <?= date('Y') ?> SILOMBA. Hak Cipta Dilindungi.</p>
 </footer>

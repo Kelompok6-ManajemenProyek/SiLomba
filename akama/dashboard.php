@@ -12,15 +12,21 @@ $stats = [
     'sertifikat' => 0
 ];
 
+$status_counts = [];
+try {
+    $rows = $pdo->query("SELECT status, COUNT(*) AS total FROM lomba GROUP BY status")->fetchAll();
+    foreach ($rows as $r) $status_counts[$r['status']] = (int)$r['total'];
+} catch (PDOException $e) { }
+
 try {
     $stats['pengajuan'] = (int) $pdo->query(
         "SELECT COUNT(*) FROM lomba WHERE status = 'menunggu'"
     )->fetchColumn();
 
-    $stats['lomba'] = (int) $pdo->query(
-        "SELECT COUNT(*) FROM lomba
-         WHERE status IN ('disetujui', 'dipublikasikan', 'selesai')"
-    )->fetchColumn();
+     $stats['lomba'] = (int) $pdo->query(
+         "SELECT COUNT(*) FROM lomba
+          WHERE status IN ('disetujui', 'siap_publikasi', 'dipublikasikan', 'selesai')"
+     )->fetchColumn();
 
     $stats['peserta'] = (int) $pdo->query(
         "SELECT COUNT(*) FROM pendaftaran_lomba"
@@ -147,4 +153,38 @@ require_once __DIR__ . '/../includes/sidebar_akama.php';
     </div>
 </section>
 
+<section class="card">
+    <h2>Statistik Lomba per Status</h2>
+    <canvas id="lombaChart" height="120"></canvas>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const labels = <?= json_encode(array_keys($status_counts)) ?>;
+const data = <?= json_encode(array_values($status_counts)) ?>;
+new Chart(document.getElementById('lombaChart'), {
+  type: 'bar',
+  data: { labels, datasets: [{ label: 'Jumlah Lomba', data, backgroundColor: '#4f46e5' }] },
+  options: { responsive: true, scales: { y: { beginAtZero: true } } }
+});
+</script>
+
+<section class="card">
+    <h2>Statistik Lomba per Status</h2>
+    <canvas id="lombaChart" height="120"></canvas>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const labels = <?= json_encode(array_keys($status_counts)) ?>;
+const data = <?= json_encode(array_values($status_counts)) ?>;
+new Chart(document.getElementById('lombaChart'), {
+  type: 'bar',
+  data: { labels, datasets: [{ label: 'Jumlah Lomba', data, backgroundColor: '#4f46e5' }] },
+  options: { responsive: true, scales: { y: { beginAtZero: true } } }
+});
+</script>
+
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
+
+<script>setInterval(function(){ location.reload(); }, 60000);</script>
