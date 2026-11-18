@@ -64,3 +64,7 @@ require_once __DIR__ . '/../includes/sidebar_mahasiswa.php';
 </section>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
+
+<script>
+setInterval(function(){ location.reload(); }, 30000);
+</script>
